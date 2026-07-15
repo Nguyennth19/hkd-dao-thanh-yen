@@ -1,0 +1,149 @@
+<script>
+let currentTab = 'dashboard';
+let globalCategories = { thu: [], chi: [] };
+
+// Biến cho phân trang Activity Log
+let allLogs = [];
+let visibleLogsCount = 0;
+
+window.addEventListener('DOMContentLoaded', () => {
+  setupMonthFilterDynamic();
+
+  google.script.run.withSuccessHandler(function(res) {
+    if (res.success) {
+      globalCategories = res.data;
+      if(typeof renderDropdownOptions === 'function') {
+        renderDropdownOptions('Thu');
+        renderDropdownOptions('Chi');
+      }
+    }
+  }).getDropdownCategories();
+
+  navigate('dashboard');
+  
+  // Nâng cấp: Lắng nghe đổi tháng và load lại data cho cả 3 trang
+  document.getElementById('monthFilter').addEventListener('change', () => {
+    if (currentTab === 'dashboard' && typeof loadDashboard === 'function') loadDashboard();
+    if (currentTab === 'income' && typeof loadTransactions === 'function') loadTransactions('Thu');
+    if (currentTab === 'expense' && typeof loadTransactions === 'function') loadTransactions('Chi');
+  });
+});
+
+function setupMonthFilterDynamic() {
+  const filter = document.getElementById('monthFilter');
+  if (!filter) return;
+  const now = new Date();
+  const currentMonth = now.getMonth(); 
+  const currentYear = now.getFullYear();
+  let prevMonth = currentMonth - 1; let prevYear = currentYear;
+  if (prevMonth < 0) { prevMonth = 11; prevYear -= 1; }
+  const pad = (n) => n < 10 ? '0' + n : n;
+  const opt1Value = `${currentYear}-${pad(currentMonth + 1)}`; const opt1Label = `Thg ${currentMonth + 1} ${currentYear}`;
+  const opt2Value = `${prevYear}-${pad(prevMonth + 1)}`; const opt2Label = `Thg ${prevMonth + 1} ${prevYear}`;
+  filter.innerHTML = '<option value="all">Tất cả thời gian</option>';
+  filter.innerHTML += `<option value="${opt1Value}">${opt1Label}</option>`;
+  filter.innerHTML += `<option value="${opt2Value}">${opt2Label}</option>`;
+}
+
+function showSpinner(msg = 'Hệ thống đang xử lý...') {
+  const spinner = document.getElementById('globalSpinner');
+  spinner.querySelector('span').innerText = msg;
+  spinner.classList.remove('opacity-0', 'pointer-events-none');
+}
+
+function hideSpinner() {
+  document.getElementById('globalSpinner').classList.add('opacity-0', 'pointer-events-none');
+}
+
+function navigate(tabName) {
+  currentTab = tabName;
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    if (btn.getAttribute('data-target') === tabName) { btn.classList.add('active', 'bg-green-50', 'text-green-700'); btn.classList.remove('text-gray-600', 'hover:bg-gray-50'); } 
+    else { btn.classList.remove('active', 'bg-green-50', 'text-green-700'); btn.classList.add('text-gray-600', 'hover:bg-gray-50'); }
+  });
+  document.querySelectorAll('.nav-btn-mobile').forEach(btn => {
+    if (btn.getAttribute('data-target') === tabName) { btn.classList.add('active', 'text-green-600'); btn.classList.remove('text-gray-400'); } 
+    else { btn.classList.remove('active', 'text-green-600'); btn.classList.add('text-gray-400'); }
+  });
+  
+  const titleMap = { 'dashboard': 'Tổng Quan', 'income': 'Nhật Ký Thu Nhập', 'expense': 'Nhật Ký Chi Phí', 'settings': 'Thiết Lập' };
+  document.getElementById('pageTitle').innerText = titleMap[tabName] || 'Hệ Thống';
+  
+  document.querySelectorAll('.view-section').forEach(section => { section.classList.add('hidden'); });
+  document.getElementById('view-' + tabName).classList.remove('hidden');
+
+  if (tabName === 'dashboard' && typeof loadDashboard === 'function') loadDashboard();
+  if (tabName === 'income' && typeof loadTransactions === 'function') loadTransactions('Thu');
+  if (tabName === 'expense' && typeof loadTransactions === 'function') loadTransactions('Chi');
+  if (tabName === 'settings') {
+    hideSpinner();
+    initActivityLogs(); // Tải log khi vào tab settings
+  }
+}
+
+// Logic hiển thị Activity Log
+function initActivityLogs() {
+  const container = document.getElementById('activityLogContainer');
+  container.innerHTML = '<p class="text-sm text-gray-400 text-center py-4 italic">Đang tải lịch sử...</p>';
+  document.getElementById('btnLoadMoreLogs').classList.add('hidden');
+
+  google.script.run.withSuccessHandler(res => {
+    if(res.success) {
+      allLogs = res.data; 
+      visibleLogsCount = 0;
+      container.innerHTML = '';
+      if(allLogs.length === 0) {
+         container.innerHTML = '<p class="text-sm text-gray-400 text-center py-4 italic">Chưa có thao tác nào được ghi nhận.</p>';
+      } else {
+         loadMoreActivityLogs();
+      }
+    }
+  }).getTransactions('All', 'all');
+}
+
+function loadMoreActivityLogs() {
+  const container = document.getElementById('activityLogContainer');
+  const btn = document.getElementById('btnLoadMoreLogs');
+  const fragment = document.createDocumentFragment();
+
+  const nextLogs = allLogs.slice(visibleLogsCount, visibleLogsCount + 5);
+  nextLogs.forEach(log => {
+    const div = document.createElement('div');
+    div.className = "flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100 transition-opacity duration-300";
+
+    const isThu = log.type === 'Thu';
+    const icon = isThu ? '<i class="fas fa-arrow-down text-emerald-500"></i>' : '<i class="fas fa-arrow-up text-amber-500"></i>';
+    const iconBg = isThu ? 'bg-emerald-100' : 'bg-amber-100';
+    const textColor = isThu ? 'text-emerald-600' : 'text-amber-600';
+
+    div.innerHTML = `
+      <div class="flex items-center space-x-3 overflow-hidden">
+        <div class="w-8 h-8 rounded-full flex flex-shrink-0 items-center justify-center ${iconBg}">
+           ${icon}
+        </div>
+        <div class="truncate">
+          <p class="text-sm text-gray-800 truncate">Đã ghi nhận <b>${log.type}</b>: ${log.category}</p>
+          <p class="text-[10px] text-gray-400"><i class="far fa-clock mr-1"></i>${log.date}</p>
+        </div>
+      </div>
+      <div class="text-right flex-shrink-0 ml-2">
+        <p class="text-sm font-bold ${textColor}">${formatCurrency(log.net)}</p>
+      </div>
+    `;
+    fragment.appendChild(div);
+  });
+
+  container.appendChild(fragment);
+  visibleLogsCount += nextLogs.length;
+
+  if(visibleLogsCount >= allLogs.length) {
+    btn.classList.add('hidden');
+  } else {
+    btn.classList.remove('hidden');
+  }
+}
+
+function formatCurrency(amount) {
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount).replace('₫', 'đ');
+}
+</script>

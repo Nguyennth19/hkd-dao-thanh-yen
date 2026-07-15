@@ -1,0 +1,81 @@
+<style>
+  /* Tối ưu nhúng iFrame: Khóa nền, chống cuộn kép và lỗi 100vh trên iOS */
+  html, body { 
+    margin: 0; 
+    padding: 0; 
+    width: 100%; 
+    height: 100%; 
+    position: fixed; 
+    overflow: hidden;
+  }
+
+  body { font-family: 'Plus Jakarta Sans', sans-serif; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  
+  .nav-btn.active {
+    background-color: #f0fdf4 !important; color: #16a34a !important;
+    border-left: 4px solid #16a34a; border-radius: 0 12px 12px 0;
+  }
+  .nav-btn-mobile.active { color: #16a34a !important; }
+  
+  input:focus, select:focus, textarea:focus {
+    border-color: #22c55e !important; box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2) !important; outline: none;
+  }
+
+  input[type=file]::file-selector-button {
+    border: none; background: #f3f4f6; padding: 8px 12px; border-radius: 6px;
+    color: #4b5563; cursor: pointer; font-weight: 600; margin-right: 12px; transition: background 0.2s;
+  }
+  input[type=file]::file-selector-button:hover { background: #e5e7eb; }
+
+  /* Bắt buộc ẩn View khi chưa active */
+  .view-section.hidden { display: none !important; }
+
+  /* HIỆU ỨNG ĐỒNG TIỀN NẢY (COIN BOUNCE) */
+  @keyframes bounce-coin {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-30px); }
+  }
+  @keyframes shadow-scale {
+    0%, 100% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(0.5); opacity: 0.1; }
+  }
+  
+  .coin-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+  
+  .coin-img {
+    width: 72px;
+    height: 72px;
+    animation: bounce-coin 0.8s infinite ease-in-out;
+    z-index: 2;
+    object-fit: contain;
+  }
+  
+  .coin-shadow {
+    width: 48px;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 50%;
+    animation: shadow-scale 0.8s infinite ease-in-out;
+    margin-top: -4px;
+    filter: blur(2px);
+  }
+
+  /* HIỆU ỨNG THANH LOADING CHO SPLASH SCREEN GAME STYLE */
+  @keyframes loadBar {
+    0% { width: 0%; }
+    20% { width: 30%; }
+    50% { width: 60%; }
+    80% { width: 90%; }
+    100% { width: 100%; }
+  }
+</style>

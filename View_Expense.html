@@ -1,0 +1,64 @@
+<div id="view-expense" class="view-section hidden">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="bg-white p-5 md:p-6 rounded-xl shadow-sm border border-gray-100 h-fit">
+      <h3 class="text-base md:text-lg font-bold text-gray-800 mb-4 border-b pb-2"><i class="fas fa-plus-circle text-amber-500 mr-2"></i>Ghi nhận Chi Phí</h3>
+      <form id="formExpense" onsubmit="handleFormSubmit(event, 'Chi')" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ngày giao dịch</label>
+          <input type="date" id="expDate" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Loại chi phí</label>
+          <select id="expCategory" onchange="checkCustomCategory('Chi', this.value)" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm"></select>
+        </div>
+        <div id="expCustomWrapper" class="hidden pb-2 animate-fade-in">
+          <label class="block text-xs font-bold text-amber-600 uppercase mb-1"><i class="fas fa-level-up-alt rotate-90 mr-1"></i> Nhập tên loại chi mới</label>
+          <input type="text" id="expCustomCategory" placeholder="Ví dụ: Chi phí Xăng xe..." class="w-full border border-amber-300 bg-amber-50 rounded-lg p-2.5 text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Số tiền chi</label>
+          <input type="number" id="expAmount" required min="0" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Thuế (nếu có)</label>
+          <input type="number" id="expTax" value="0" min="0" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Hóa đơn / Chứng từ</label>
+          <input type="file" id="expFile" accept="image/*,.pdf,.doc,.docx" class="w-full border border-gray-300 rounded-lg p-1 text-sm bg-white">
+          <p class="text-[10px] text-gray-400 mt-1 italic">File sẽ được tải lên Google Drive.</p>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ghi chú</label>
+          <textarea id="expNote" rows="2" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm"></textarea>
+        </div>
+        <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center">
+          <i class="fas fa-check-circle mr-2"></i> Xác Nhận Chi
+        </button>
+      </form>
+    </div>
+
+    <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="px-4 py-3 md:px-6 md:py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+        <h3 class="font-bold text-gray-700 uppercase text-xs md:text-sm tracking-wider">Nhật Ký Chi</h3>
+        <span id="txtTotalExpenseHeader" class="text-xs md:text-sm font-black text-amber-600 bg-amber-50 px-2 py-1 md:px-3 md:py-1 rounded-lg">Tổng: đ 0</span>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse whitespace-nowrap">
+          <thead>
+            <tr class="bg-gray-100 text-gray-500 text-[10px] md:text-xs font-bold uppercase border-b border-gray-200">
+              <th class="p-3 pl-4 md:pl-6">Ngày</th>
+              <th class="p-3">Loại</th>
+              <th class="p-3 text-right">Số tiền</th>
+              <th class="p-3 text-right font-black">Ròng</th>
+              <th class="p-3 text-center" title="Tài liệu đính kèm">Hồ sơ</th>
+            </tr>
+          </thead>
+          <tbody id="tableExpenseHistory" class="text-xs md:text-sm text-gray-600 divide-y divide-gray-100">
+            <tr><td colspan="5" class="p-6 text-center text-gray-400">Đang tải nhật ký...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

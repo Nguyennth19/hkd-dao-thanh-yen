@@ -1,0 +1,78 @@
+<div id="view-dashboard" class="view-section">
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4 mb-6">
+    <div class="bg-white p-3 md:p-4 rounded-xl shadow-sm border border-gray-100 text-center">
+      <p class="text-[10px] md:text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Tổng thu nhập</p>
+      <p id="txtTongThu" class="text-base md:text-xl font-black text-gray-800">đ 0</p>
+    </div>
+    <div class="bg-white p-3 md:p-4 rounded-xl shadow-sm border border-gray-100 text-center">
+      <p class="text-[10px] md:text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Tổng chi phí</p>
+      <p id="txtTongChi" class="text-base md:text-xl font-black text-gray-800">đ 0</p>
+    </div>
+    <div class="bg-white p-3 md:p-4 rounded-xl shadow-sm border border-gray-100 text-center">
+      <p class="text-[10px] md:text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">LN Thực Tế</p>
+      <p id="txtLoiNhuan" class="text-base md:text-xl font-black text-gray-800">đ 0</p>
+    </div>
+    <div class="bg-white p-3 md:p-4 rounded-xl shadow-sm border border-gray-100 text-center hidden md:block">
+      <p class="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">LN Mục Tiêu</p>
+      <p id="txtMucTieu" class="text-xl font-black text-gray-800">đ 0</p>
+    </div>
+    <div class="bg-white p-3 md:p-4 rounded-xl shadow-sm border border-gray-100 text-center hidden md:block">
+      <p class="text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Biên Lợi Nhuận</p>
+      <p id="txtBienLoiNhuan" class="text-xl font-black text-gray-800">0%</p>
+    </div>
+    <div class="bg-white p-3 md:p-4 rounded-xl shadow-sm border border-gray-100 text-center flex flex-col justify-center items-center">
+      <p class="text-[10px] md:text-xs text-gray-400 font-bold uppercase tracking-wider mb-1">Đánh giá</p>
+      <span id="badgeDanhGia" class="px-2 py-0.5 md:px-2.5 md:py-1 text-[10px] md:text-xs font-bold rounded-full bg-gray-100 text-gray-600">...</span>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center">
+      <h3 class="text-xs md:text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Phân bổ loại chi phí</h3>
+      <div class="w-full max-w-[250px] h-[200px] md:h-[250px]"><canvas id="pieChartChiPhi"></canvas></div>
+    </div>
+    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center">
+      <h3 class="text-xs md:text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Thu nhập vs Chi phí</h3>
+      <div class="w-full h-[200px] md:h-[250px]"><canvas id="barChartSoSanh"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="bg-emerald-50 px-4 py-3 md:px-5 border-b border-gray-100"><h3 class="text-xs md:text-sm font-bold text-emerald-800 uppercase tracking-wider">Chi Tiết Nguồn Thu Nhập</h3></div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse whitespace-nowrap">
+          <thead>
+            <tr class="bg-gray-50 text-gray-500 text-[10px] md:text-xs font-bold uppercase border-b border-gray-100">
+              <th class="p-3 pl-4 md:pl-5">Nguồn thu nhập</th>
+              <th class="p-3 text-right">Ròng</th>
+              <th class="p-3 text-right hidden md:table-cell">Thuế</th>
+              <th class="p-3 text-right pr-4 md:pr-5">Tổng</th>
+            </tr>
+          </thead>
+          <tbody id="tableThuNhapBody" class="text-xs md:text-sm text-gray-600 divide-y divide-gray-50">
+            <tr><td colspan="4" class="p-4 text-center text-gray-400">Đang đồng bộ...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="bg-amber-50 px-4 py-3 md:px-5 border-b border-gray-100"><h3 class="text-xs md:text-sm font-bold text-amber-800 uppercase tracking-wider">Chi Tiết Loại Chi Phí</h3></div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse whitespace-nowrap">
+          <thead>
+            <tr class="bg-gray-50 text-gray-500 text-[10px] md:text-xs font-bold uppercase border-b border-gray-100">
+              <th class="p-3 pl-4 md:pl-5">Loại chi phí</th>
+              <th class="p-3 text-right">Ròng</th>
+              <th class="p-3 text-right hidden md:table-cell">Thuế</th>
+              <th class="p-3 text-right pr-4 md:pr-5">Tổng</th>
+            </tr>
+          </thead>
+          <tbody id="tableChiPhiBody" class="text-xs md:text-sm text-gray-600 divide-y divide-gray-50">
+            <tr><td colspan="4" class="p-4 text-center text-gray-400">Đang đồng bộ...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

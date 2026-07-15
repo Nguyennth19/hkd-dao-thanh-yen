@@ -1,0 +1,26 @@
+<div id="view-settings" class="view-section hidden">
+  
+  <div class="max-w-2xl bg-white p-6 rounded-xl shadow-sm border border-gray-100 mx-auto mb-6">
+    <h3 class="text-md font-bold text-gray-800 mb-4 border-b pb-2"><i class="fas fa-history mr-2 text-gray-500"></i>Lịch Sử Thao Tác Gần Đây</h3>
+    <div id="activityLogContainer" class="space-y-3">
+      <p class="text-sm text-gray-400 text-center py-4 italic">Đang tải lịch sử...</p>
+    </div>
+    <div class="mt-4 text-center">
+      <button id="btnLoadMoreLogs" onclick="loadMoreActivityLogs()" class="text-sm text-green-600 font-semibold hover:text-green-700 hidden px-4 py-2 bg-green-50 rounded-lg transition-colors">Xem thêm 5 thao tác <i class="fas fa-chevron-down ml-1"></i></button>
+    </div>
+  </div>
+
+  <div class="max-w-2xl bg-white p-6 rounded-xl shadow-sm border border-gray-100 mx-auto">
+    <h3 class="text-md font-bold text-gray-800 mb-4 border-b pb-2"><i class="fas fa-sliders-h mr-2 text-gray-500"></i>Cấu Hình Tệp Tin Đầu Vào</h3>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Đơn vị tiền tệ</label>
+        <input type="text" value="Việt Nam Đồng (đ)" class="w-full border border-gray-200 bg-gray-50 text-gray-500 rounded-lg p-2.5 text-sm cursor-not-allowed" disabled>
+      </div>
+      <div class="bg-blue-50 p-3 rounded-lg border border-blue-100 text-xs md:text-sm text-blue-700 leading-relaxed">
+        <p><i class="fas fa-info-circle mr-1"></i> <b>Lưu ý:</b> Hệ thống đồng bộ trực tiếp. Mọi thông tin thiết lập hãy tùy chỉnh trên Google Sheet.</p>
+      </div>
+    </div>
+  </div>
+
+</div>

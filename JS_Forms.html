@@ -1,0 +1,111 @@
+<script>
+function renderDropdownOptions(type) {
+  const selectId = type === 'Thu' ? 'incCategory' : 'expCategory';
+  const selectEl = document.getElementById(selectId);
+  if(!selectEl) return;
+  
+  let options = type === 'Thu' ? globalCategories.thu : globalCategories.chi;
+  let html = '<option value="" disabled selected>-- Chọn danh mục --</option>';
+  options.forEach(opt => { html += `<option value="${opt}">${opt}</option>`; });
+  if(!options.includes('Khác')) html += `<option value="Khác">Khác</option>`;
+  selectEl.innerHTML = html;
+}
+
+function checkCustomCategory(type, selectedValue) {
+  const wrapper = document.getElementById(type === 'Thu' ? 'incCustomWrapper' : 'expCustomWrapper');
+  const input = document.getElementById(type === 'Thu' ? 'incCustomCategory' : 'expCustomCategory');
+  if (selectedValue === 'Khác') {
+    wrapper.classList.remove('hidden'); input.setAttribute('required', 'true');
+  } else {
+    wrapper.classList.add('hidden'); input.removeAttribute('required'); input.value = '';
+  }
+}
+
+function loadTransactions(typeFilter) {
+  showSpinner('Đang tải lịch sử giao dịch...');
+  // Lấy giá trị lọc tháng truyền cho Backend
+  const mFilter = document.getElementById('monthFilter') ? document.getElementById('monthFilter').value : 'all';
+
+  google.script.run
+    .withSuccessHandler(function(res) {
+      hideSpinner();
+      if (res.success) {
+        let html = ''; let totalVal = 0;
+        if (res.data.length === 0) {
+          html = `<tr><td colspan="5" class="p-6 text-center text-gray-400 italic">Chưa có giao dịch trong thời gian này.</td></tr>`;
+        } else {
+          res.data.forEach(item => {
+            totalVal += parseFloat(item.net) || 0;
+            let linkFile = item.fileUrl ? `<a href="${item.fileUrl}" target="_blank" class="text-blue-500 hover:text-blue-700 bg-blue-50 px-2 py-1 rounded-md"><i class="fas fa-file-alt"></i></a>` : `<span class="text-gray-300">-</span>`;
+            html += `<tr class="hover:bg-gray-50/70 transition-colors">
+                <td class="p-3 pl-4 md:pl-6 font-medium text-gray-600">${item.date}</td>
+                <td class="p-3"><span class="px-2 py-1 rounded-md text-[10px] md:text-xs font-bold ${typeFilter === 'Thu' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'} whitespace-nowrap">${item.category}</span></td>
+                <td class="p-3 text-right font-medium">${formatCurrency(item.amount)}</td>
+                <td class="p-3 text-right font-black text-gray-800">${formatCurrency(item.net)}</td>
+                <td class="p-3 text-center">${linkFile}</td>
+              </tr>`;
+          });
+        }
+        if (typeFilter === 'Thu') {
+          document.getElementById('tableIncomeHistory').innerHTML = html; document.getElementById('txtTotalIncomeHeader').innerText = "Tổng: " + formatCurrency(totalVal);
+        } else {
+          document.getElementById('tableExpenseHistory').innerHTML = html; document.getElementById('txtTotalExpenseHeader').innerText = "Tổng: " + formatCurrency(totalVal);
+        }
+      }
+    }).getTransactions(typeFilter, mFilter);
+}
+
+function getBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });
+}
+
+async function handleFormSubmit(event, transactionType) {
+  event.preventDefault();
+  const prefix = transactionType === 'Thu' ? 'inc' : 'exp';
+  
+  const payload = {
+    date: document.getElementById(prefix + 'Date').value,
+    type: transactionType,
+    category: document.getElementById(prefix + 'Category').value,
+    customCategory: document.getElementById(prefix + 'CustomCategory') ? document.getElementById(prefix + 'CustomCategory').value : '',
+    amount: document.getElementById(prefix + 'Amount').value,
+    tax: document.getElementById(prefix + 'Tax').value,
+    note: document.getElementById(prefix + 'Note').value,
+    fileUrl: ''
+  };
+  
+  const fileInput = document.getElementById(prefix + 'File');
+  if (fileInput.files && fileInput.files.length > 0) {
+    showSpinner('Đang tải hồ sơ lên Google Drive...');
+    try {
+      const base64 = await getBase64(fileInput.files[0]);
+      google.script.run.withSuccessHandler(res => {
+        if(res.success) { payload.fileUrl = res.url; submitDataToServer(payload, transactionType); } 
+        else { hideSpinner(); alert("Lỗi tải file: " + res.error); }
+      }).withFailureHandler(err => { hideSpinner(); alert("Mất kết nối: " + err); }).uploadFileToDrive(base64, fileInput.files[0].name, transactionType);
+    } catch(e) { hideSpinner(); alert("Lỗi đọc định dạng file!"); }
+  } else {
+    submitDataToServer(payload, transactionType);
+  }
+}
+
+function submitDataToServer(payload, transactionType) {
+  showSpinner('Đang đồng bộ dữ liệu vào Bảng tính...');
+  google.script.run.withSuccessHandler(function(res) {
+    if(payload.category === 'Khác' && payload.customCategory.trim() !== '') {
+      google.script.run.withSuccessHandler(r => { if (r.success) globalCategories = r.data; }).getDropdownCategories();
+    }
+    hideSpinner();
+    if (res.success) {
+      alert(res.message);
+      document.getElementById(transactionType === 'Thu' ? 'formIncome' : 'formExpense').reset();
+      navigate(transactionType === 'Thu' ? 'income' : 'expense'); 
+    } else { alert("Lỗi lưu DB: " + res.message); }
+  }).withFailureHandler(err => { hideSpinner(); alert("Lỗi mạng: " + err.toString()); }).saveTransaction(payload);
+}
+</script>

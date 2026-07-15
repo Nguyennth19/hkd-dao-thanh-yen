@@ -1,0 +1,64 @@
+<div id="view-income" class="view-section hidden">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="bg-white p-5 md:p-6 rounded-xl shadow-sm border border-gray-100 h-fit">
+      <h3 class="text-base md:text-lg font-bold text-gray-800 mb-4 border-b pb-2"><i class="fas fa-plus-circle text-emerald-500 mr-2"></i>Ghi nhận Thu Nhập</h3>
+      <form id="formIncome" onsubmit="handleFormSubmit(event, 'Thu')" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ngày giao dịch</label>
+          <input type="date" id="incDate" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Nguồn thu nhập</label>
+          <select id="incCategory" onchange="checkCustomCategory('Thu', this.value)" required class="w-full border border-gray-300 rounded-lg p-2.5 text-sm"></select>
+        </div>
+        <div id="incCustomWrapper" class="hidden pb-2 animate-fade-in">
+          <label class="block text-xs font-bold text-emerald-600 uppercase mb-1"><i class="fas fa-level-up-alt rotate-90 mr-1"></i> Nhập tên nguồn thu mới</label>
+          <input type="text" id="incCustomCategory" placeholder="Ví dụ: Lãi suất NH..." class="w-full border border-emerald-300 bg-emerald-50 rounded-lg p-2.5 text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Số tiền giao dịch</label>
+          <input type="number" id="incAmount" required min="0" placeholder="Ví dụ: 20000" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Thuế phát sinh</label>
+          <input type="number" id="incTax" value="0" min="0" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Tài liệu / Chứng từ</label>
+          <input type="file" id="incFile" accept="image/*,.pdf,.doc,.docx" class="w-full border border-gray-300 rounded-lg p-1 text-sm bg-white">
+          <p class="text-[10px] text-gray-400 mt-1 italic">File sẽ được tải lên Google Drive.</p>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ghi chú chi tiết</label>
+          <textarea id="incNote" rows="2" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm"></textarea>
+        </div>
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center">
+          <i class="fas fa-check-circle mr-2"></i> Xác Nhận Lưu
+        </button>
+      </form>
+    </div>
+
+    <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="px-4 py-3 md:px-6 md:py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+        <h3 class="font-bold text-gray-700 uppercase text-xs md:text-sm tracking-wider">Nhật Ký Thu</h3>
+        <span id="txtTotalIncomeHeader" class="text-xs md:text-sm font-black text-emerald-600 bg-emerald-50 px-2 py-1 md:px-3 md:py-1 rounded-lg">Tổng: đ 0</span>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse whitespace-nowrap">
+          <thead>
+            <tr class="bg-gray-100 text-gray-500 text-[10px] md:text-xs font-bold uppercase border-b border-gray-200">
+              <th class="p-3 pl-4 md:pl-6">Ngày</th>
+              <th class="p-3">Nguồn</th>
+              <th class="p-3 text-right">Số tiền</th>
+              <th class="p-3 text-right font-black">Ròng</th>
+              <th class="p-3 text-center" title="Tài liệu đính kèm">Hồ sơ</th>
+            </tr>
+          </thead>
+          <tbody id="tableIncomeHistory" class="text-xs md:text-sm text-gray-600 divide-y divide-gray-100">
+            <tr><td colspan="5" class="p-6 text-center text-gray-400">Đang tải nhật ký...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

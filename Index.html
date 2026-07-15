@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>HKD DTY</title>
+  
+  <meta name="theme-color" content="#10b981">
+  
+  <!-- CẤU HÌNH PWA VÀ ICON CHO THIẾT BỊ DI ĐỘNG (Sử dụng kỹ thuật Inline Data URI) -->
+  <meta name="apple-mobile-web-app-title" content="HKD DTY">
+  <meta name="application-name" content="THUẾ HKD">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <!-- Manifest được mã hóa URL cứng để trình duyệt đọc ngay lập tức -->
+  <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%20%22HKD%20DTY%22%2C%22short_name%22%3A%20%22HKD%20DTY%22%2C%22start_url%22%3A%20%22.%22%2C%22display%22%3A%20%22standalone%22%2C%22background_color%22%3A%20%22%23ffffff%22%2C%22theme_color%22%3A%20%22%2310b981%22%2C%22icons%22%3A%20%5B%7B%22src%22%3A%20%22https%3A%2F%2Fraw.githubusercontent.com%2FNguyennth19%2FHKD-DAO-THANH-YEN%2F5957e66e70bb0a693a75b4994fef4140da3bfc2c%2Ficon.png%22%2C%22sizes%22%3A%20%22192x192%22%2C%22type%22%3A%20%22image%2Fpng%22%7D%2C%7B%22src%22%3A%20%22https%3A%2F%2Fraw.githubusercontent.com%2FNguyennth19%2FHKD-DAO-THANH-YEN%2F5957e66e70bb0a693a75b4994fef4140da3bfc2c%2Ficon.png%22%2C%22sizes%22%3A%20%22512x512%22%2C%22type%22%3A%20%22image%2Fpng%22%7D%5D%7D">
+  
+  <!-- Đường dẫn Icon cho iOS -->
+  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/Nguyennth19/hkd-dao-thanh-yen/b65f49d93ed76a9f8a38c87595dceec600a94a44/icon-htk-dty.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="https://raw.githubusercontent.com/Nguyennth19/hkd-dao-thanh-yen/b65f49d93ed76a9f8a38c87595dceec600a94a44/icon-htk-dty.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://raw.githubusercontent.com/Nguyennth19/hkd-dao-thanh-yen/b65f49d93ed76a9f8a38c87595dceec600a94a44/icon-htk-dty.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="https://raw.githubusercontent.com/Nguyennth19/hkd-dao-thanh-yen/b65f49d93ed76a9f8a38c87595dceec600a94a44/icon-htk-dty.png">
+  
+  <!-- Đường dẫn Icon cho trình duyệt mặc định / Android -->
+  <link rel="icon" type="image/png" sizes="192x192" href="https://raw.githubusercontent.com/Nguyennth19/hkd-dao-thanh-yen/b65f49d93ed76a9f8a38c87595dceec600a94a44/icon-htk-dty.png">
+  <link rel="shortcut icon" href="https://raw.githubusercontent.com/Nguyennth19/hkd-dao-thanh-yen/b65f49d93ed76a9f8a38c87595dceec600a94a44/icon-htk-dty.png">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <?!= include('CSS_Global'); ?>
+</head>
+<body class="bg-[#fcfbf9] text-gray-800 antialiased overflow-hidden">
+
+  <!-- MÀN HÌNH KHỞI ĐỘNG (SPLASH SCREEN GAME STYLE) - CHỈ CHẠY 1 LẦN LÚC MỞ APP -->
+  <div id="splashScreenGame" class="fixed inset-0 z-[99999] flex flex-col justify-end items-center pb-20 transition-opacity duration-1000" style="background-image: url('https://raw.githubusercontent.com/Nguyennth19/hkd-dao-thanh-yen/6c4014210efacb1285d57014594effdfe040fe8a/load-phone-hkd-dty.png'); background-size: cover; background-position: center; background-repeat: no-repeat; background-color: #10b981;">
+    
+    <!-- Tích hợp đồng tiền nảy đè lên ảnh nền -->
+    <div class="coin-wrapper mb-6">
+      <img src="https://raw.githubusercontent.com/Nguyennth19/hkd-dao-thanh-yen/6c4014210efacb1285d57014594effdfe040fe8a/Coin.png" class="coin-img w-20 h-20 drop-shadow-2xl" alt="Loading Coin">
+      <div class="coin-shadow bg-black/60 blur-[3px]"></div>
+    </div>
+
+    <!-- Thanh Loading chạy trong 5 giây -->
+    <div class="w-64 h-1.5 bg-black/40 rounded-full overflow-hidden backdrop-blur-md mb-3 border border-white/20 shadow-lg">
+      <div class="h-full bg-gradient-to-r from-emerald-400 to-green-300 rounded-full" style="animation: loadBar 4.5s ease-out forwards;"></div>
+    </div>
+    
+    <!-- Text thông báo -->
+    <span class="text-white font-bold text-xs tracking-[0.2em] uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">Đang khởi tạo hệ thống...</span>
+  </div>
+
+  <!-- SPINNER HIỆN TẠI CỦA BẠN (Dùng khi lưu dữ liệu hoặc chuyển tab bên trong App) -->
+  <div id="globalSpinner" class="fixed inset-0 bg-white bg-opacity-90 z-50 flex flex-col justify-center items-center transition-opacity duration-300 opacity-0 pointer-events-none">
+    <div class="coin-wrapper">
+      <img src="https://raw.githubusercontent.com/Nguyennth19/hkd-dao-thanh-yen/6c4014210efacb1285d57014594effdfe040fe8a/Coin.png" class="coin-img" alt="Loading Coin">
+      <div class="coin-shadow"></div>
+    </div>
+    <span class="text-green-700 font-bold text-sm tracking-wide mt-2">Hệ thống đang tải dữ liệu...</span>
+  </div>
+
+  <div class="flex h-full w-full relative">
+    
+    <aside class="hidden md:flex w-64 bg-white border-r border-gray-200 shadow-sm flex-col transition-all duration-300">
+      <div class="p-6 border-b border-gray-100 flex items-center justify-center">
+        <h1 class="text-xl font-bold text-gray-800 text-center tracking-tight">SỔ SÁCH KẾ TOÁN<br><span class="text-xs font-semibold text-gray-400 tracking-wider">HKD Đào Thanh Yến</span></h1>
+      </div>
+      <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+        <button onclick="navigate('dashboard')" class="nav-btn w-full flex items-center px-4 py-3 bg-green-50 text-green-700 rounded-xl font-medium transition-colors" data-target="dashboard">
+          <i class="fas fa-chart-pie w-6 text-lg"></i> Tổng quan
+        </button>
+        <button onclick="navigate('income')" class="nav-btn w-full flex items-center px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-xl font-medium transition-colors" data-target="income">
+          <i class="fas fa-arrow-down w-6 text-lg"></i> Nhập Doanh Thu
+        </button>
+        <button onclick="navigate('expense')" class="nav-btn w-full flex items-center px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-xl font-medium transition-colors" data-target="expense">
+          <i class="fas fa-arrow-up w-6 text-lg"></i> Nhập Chi Phí
+        </button>
+        <button onclick="navigate('settings')" class="nav-btn w-full flex items-center px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-xl font-medium transition-colors" data-target="settings">
+          <i class="fas fa-sliders-h w-6 text-lg"></i> Thiết lập
+        </button>
+      </nav>
+      <div class="p-4 border-t border-gray-100"><div class="text-xs text-gray-400 text-center font-medium">Hệ Thống Báo Cáo Thuế DTY</div></div>
+    </aside>
+
+    <main class="flex-1 flex flex-col relative overflow-hidden pb-16 md:pb-0">
+      <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 md:px-8 z-10">
+        <h2 id="pageTitle" class="text-lg md:text-2xl font-black text-gray-800 uppercase tracking-wide">Tổng Quan</h2>
+        <div class="flex items-center space-x-4">
+          <select id="monthFilter" class="border border-gray-300 rounded-xl px-3 py-1.5 text-xs md:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-green-400 bg-white">
+            <option value="all">Tất cả thời gian</option>
+          </select>
+        </div>
+      </header>
+
+      <div class="flex-1 overflow-y-auto p-4 md:p-8 bg-[#f8f9fa]" id="appContent">
+        <?!= include('View_Dashboard'); ?>
+        <?!= include('View_Income'); ?>
+        <?!= include('View_Expense'); ?>
+        <?!= include('View_Settings'); ?>
+      </div>
+    </main>
+
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center h-16 z-40 md:hidden shadow-[0_-4px_12px_rgba(0,0,0,0.05)] px-2">
+      <button onclick="navigate('dashboard')" class="nav-btn-mobile flex flex-col items-center justify-center text-green-600 w-16 h-full active transition-all" data-target="dashboard">
+        <i class="fas fa-chart-pie text-lg mb-0.5"></i><span class="text-[10px] font-bold tracking-tight">Tổng quan</span>
+      </button>
+      <button onclick="navigate('income')" class="nav-btn-mobile flex flex-col items-center justify-center text-gray-400 w-16 h-full transition-all" data-target="income">
+        <i class="fas fa-arrow-down text-lg mb-0.5"></i><span class="text-[10px] font-bold tracking-tight">Doanh Thu</span>
+      </button>
+      <button onclick="navigate('expense')" class="nav-btn-mobile flex flex-col items-center justify-center text-gray-400 w-16 h-full transition-all" data-target="expense">
+        <i class="fas fa-arrow-up text-lg mb-0.5"></i><span class="text-[10px] font-bold tracking-tight">Chi Phí</span>
+      </button>
+      <button onclick="navigate('settings')" class="nav-btn-mobile flex flex-col items-center justify-center text-gray-400 w-16 h-full transition-all" data-target="settings">
+        <i class="fas fa-sliders-h text-lg mb-0.5"></i><span class="text-[10px] font-bold tracking-tight">Thiết Lập</span>
+      </button>
+    </div>
+
+  </div>
+
+  <?!= include('JS_Global'); ?>
+  <?!= include('JS_Dashboard'); ?>
+  <?!= include('JS_Forms'); ?>
+  
+  <!-- SCRIPT ĐIỀU KHIỂN MÀN HÌNH KHỞI ĐỘNG (Xóa sau 5 giây) -->
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        const splash = document.getElementById('splashScreenGame');
+        if (splash) {
+          splash.style.opacity = '0'; // Bắt đầu mờ dần
+          setTimeout(() => {
+            splash.remove(); // Xóa hẳn khỏi DOM sau khi mờ xong
+          }, 1000);
+        }
+      }, 5000); // Hiển thị chuẩn 5 giây
+    });
+  </script>
+</body>
+</html>

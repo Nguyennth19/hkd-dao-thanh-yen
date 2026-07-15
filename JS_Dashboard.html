@@ -1,0 +1,93 @@
+<script>
+let activePieChart = null;
+let activeBarChart = null;
+
+function loadDashboard() {
+  showSpinner('HKD Đào Thanh Yến...');
+  // Lấy dữ liệu filter hiện tại để truyền xuống Backend
+  const monthFilter = document.getElementById('monthFilter').value;
+
+  google.script.run
+    .withSuccessHandler(function(res) {
+      if (res.success) {
+        const d = res.data;
+        document.getElementById('txtTongThu').innerText = formatCurrency(d.tongThu);
+        document.getElementById('txtTongChi').innerText = formatCurrency(d.tongChi);
+        document.getElementById('txtLoiNhuan').innerText = formatCurrency(d.loiNhuan);
+        if(document.getElementById('txtMucTieu')) document.getElementById('txtMucTieu').innerText = formatCurrency(d.mucTieu);
+        if(document.getElementById('txtBienLoiNhuan')) document.getElementById('txtBienLoiNhuan').innerText = d.bienLoiNhuan + '%';
+        
+        const badge = document.getElementById('badgeDanhGia');
+        if (d.loiNhuan >= d.mucTieu && d.tongThu > 0) {
+          badge.className = "px-2 py-0.5 md:px-2.5 md:py-1 text-[10px] md:text-xs font-bold rounded-full bg-green-100 text-green-700";
+          badge.innerText = "Đạt mục tiêu";
+        } else {
+          badge.className = "px-2 py-0.5 md:px-2.5 md:py-1 text-[10px] md:text-xs font-bold rounded-full bg-amber-100 text-amber-700";
+          badge.innerText = "Chưa đạt";
+        }
+        renderDashboardReport(d, monthFilter);
+      } else { hideSpinner(); alert("Lỗi tải: " + res.error); }
+    })
+    .withFailureHandler(err => { hideSpinner(); alert("Mất kết nối: " + err.toString()); })
+    .getDashboardData(monthFilter);
+}
+
+function renderDashboardReport(dashboardSummary, monthFilter) {
+  google.script.run.withSuccessHandler(function(res) {
+    hideSpinner();
+    if (res.success) {
+      let incomeMap = {}, expenseMap = {};
+      let totalIncNet = 0, totalIncTax = 0, totalExpNet = 0, totalExpTax = 0;
+
+      res.data.forEach(item => {
+        let nt = parseFloat(item.net) || 0, tx = parseFloat(item.tax) || 0;
+        if (item.type === 'Thu') {
+          if (!incomeMap[item.category]) incomeMap[item.category] = { net: 0, tax: 0 };
+          incomeMap[item.category].net += nt; incomeMap[item.category].tax += tx;
+          totalIncNet += nt; totalIncTax += tx;
+        } else {
+          if (!expenseMap[item.category]) expenseMap[item.category] = 0;
+          expenseMap[item.category] += nt; totalExpNet += nt; totalExpTax += tx;
+        }
+      });
+
+      let htmlThu = `<tr class="bg-gray-50/50 font-bold text-gray-800"><td class="p-3 pl-4 md:pl-5">TỔNG</td><td class="p-3 text-right text-emerald-600">${formatCurrency(totalIncNet)}</td><td class="p-3 text-right hidden md:table-cell">${formatCurrency(totalIncTax)}</td><td class="p-3 text-right pr-4 md:pr-5">${formatCurrency(totalIncNet + totalIncTax)}</td></tr>`;
+      for (let key in incomeMap) {
+        let n = incomeMap[key].net, t = incomeMap[key].tax;
+        htmlThu += `<tr><td class="p-3 pl-4 md:pl-5 font-medium">${key}</td><td class="p-3 text-right">${formatCurrency(n)}</td><td class="p-3 text-right hidden md:table-cell">${formatCurrency(t)}</td><td class="p-3 text-right pr-4 md:pr-5 font-semibold text-gray-700">${formatCurrency(n + t)}</td></tr>`;
+      }
+      document.getElementById('tableThuNhapBody').innerHTML = htmlThu;
+
+      let htmlChi = `<tr class="bg-gray-50/50 font-bold text-gray-800"><td class="p-3 pl-4 md:pl-5">TỔNG</td><td class="p-3 text-right text-amber-600">${formatCurrency(totalExpNet)}</td><td class="p-3 text-right hidden md:table-cell">${formatCurrency(totalExpTax)}</td><td class="p-3 text-right pr-4 md:pr-5">${formatCurrency(totalExpNet + totalExpTax)}</td></tr>`;
+      for (let key in expenseMap) {
+        let n = expenseMap[key];
+        htmlChi += `<tr><td class="p-3 pl-4 md:pl-5 font-medium">${key}</td><td class="p-3 text-right">${formatCurrency(n)}</td><td class="p-3 text-right hidden md:table-cell">đ 0</td><td class="p-3 text-right pr-4 md:pr-5 font-semibold text-gray-700">${formatCurrency(n)}</td></tr>`;
+      }
+      document.getElementById('tableChiPhiBody').innerHTML = htmlChi;
+
+      buildCharts(expenseMap, dashboardSummary.tongThu, dashboardSummary.tongChi);
+    }
+  }).getTransactions('All', monthFilter);
+}
+
+function buildCharts(expenseMap, tongThu, tongChi) {
+  if (activePieChart) activePieChart.destroy();
+  if (activeBarChart) activeBarChart.destroy();
+
+  let pieLabels = [], pieData = [];
+  for(let key in expenseMap) {
+    if(expenseMap[key] > 0) { pieLabels.push(key); pieData.push(expenseMap[key]); }
+  }
+  if(pieLabels.length === 0) { pieLabels = ["Chưa phát sinh"]; pieData = [1]; }
+
+  activePieChart = new Chart(document.getElementById('pieChartChiPhi').getContext('2d'), {
+    type: 'doughnut', data: { labels: pieLabels, datasets: [{ data: pieData, backgroundColor: ['#f97316', '#3b82f6', '#10b981', '#a855f7', '#eab308', '#64748b'], borderWidth: 2, borderColor: '#ffffff' }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } }, cutout: '65%' }
+  });
+
+  activeBarChart = new Chart(document.getElementById('barChartSoSanh').getContext('2d'), {
+    type: 'bar', data: { labels: ['Thu', 'Chi'], datasets: [{ data: [tongThu, tongChi], backgroundColor: ['#34d399', '#fbbf24'], borderRadius: 4, barThickness: 24 }] },
+    options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false }, ticks: { font: { weight: 'bold', size: 11 } } } } }
+  });
+}
+</script>
