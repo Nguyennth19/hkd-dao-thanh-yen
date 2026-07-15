@@ -44,44 +44,55 @@
         box-sizing: border-box;
         transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
     }
-    .splash-content { width: 100%; display: flex; flex-direction: column; align-items: center; }
-    .splash-logo { text-align: center; margin-bottom: 35vh; }
-    .splash-title {
-        font-size: 38px; font-weight: 800; color: #f59e0b; margin: 0;
-        text-shadow: 0 4px 8px rgba(0,0,0,0.7); letter-spacing: 2px;
+    
+    .splash-content { 
+        width: 100%; 
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
     }
-    .splash-subtitle {
-        font-size: 26px; font-weight: 700; color: #ffffff; margin: 5px 0 0 0;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.7);
-    }
-    .splash-tip {
-        color: #e2e8f0; font-size: 13px; text-align: center; max-width: 85%;
-        margin-bottom: 25px; line-height: 1.5; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-        background: rgba(15, 23, 42, 0.65); padding: 8px 16px; border-radius: 20px;
-        border: 1px solid rgba(255,255,255,0.1);
-    }
+    
     .progress-container {
-        position: relative; width: 85%; max-width: 350px; height: 22px;
-        background: rgba(0, 0, 0, 0.6); border: 2px solid #64748b;
-        border-radius: 11px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
+        position: relative; 
+        width: 85%; 
+        max-width: 350px; 
+        height: 22px;
+        background: rgba(0, 0, 0, 0.6); 
+        border: 2px solid #64748b;
+        border-radius: 11px; 
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
     }
+    
     .progress-bar-fill {
-        width: 0%; height: 100%;
+        width: 0%; 
+        height: 100%;
         background: linear-gradient(90deg, #f59e0b 0%, #ef4444 100%);
-        border-radius: 9px; transition: width 0.1s linear; position: relative;
+        border-radius: 9px; 
+        transition: width 0.1s linear; 
+        position: relative;
     }
+    
     .progress-bar-fill::after {
-        content: '💸'; position: absolute; right: -14px; top: 50%;
-        transform: translateY(-50%); font-size: 24px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        content: '💸'; 
+        position: absolute; 
+        right: -14px; 
+        top: 50%;
+        transform: translateY(-50%); 
+        font-size: 24px; 
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
     }
+    
     .progress-text {
-        position: absolute; width: 100%; text-align: center; top: 50%; left: 0;
-        transform: translateY(-50%); color: #ffffff; font-size: 12px; font-weight: 800;
+        position: absolute; 
+        width: 100%; 
+        text-align: center; 
+        top: 50%; 
+        left: 0;
+        transform: translateY(-50%); 
+        color: #ffffff; 
+        font-size: 12px; 
+        font-weight: 800;
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
-    }
-    .splash-version {
-        position: absolute; bottom: 15px; color: #cbd5e1; font-size: 11px;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
     }
   </style>
 </head>
