@@ -12,28 +12,37 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#10b981">
   
-  <link rel="manifest" href='data:application/manifest+json;charset=utf-8,%7B%0A%20%20%22name%22%3A%20%22Ph%C3%B9%20Sa%20Farm%22%2C%0A%20%20%22short_name%22%3A%20%22Ph%C3%B9%20Sa%22%2C%0A%20%20%22start_url%22%3A%20%22.%22%2C%0A%20%20%22display%22%3A%20%22standalone%22%2C%0A%20%20%22background_color%22%3A%20%22%23f0f4f8%22%2C%0A%20%20%22theme_color%22%3A%20%22%2310b981%22%2C%0A%20%20%22icons%22%3A%20%5B%0A%20%20%20%20%7B%0A%20%20%20%20%20%20%22src%22%3A%20%22https%3A%2F%2Flive.staticflickr.com%2F65535%2F55300817978_f977b99993.jpg%22%2C%0A%20%20%20%20%20%20%22sizes%22%3A%20%22192x192%22%2C%0A%20%20%20%20%20%20%22type%22%3A%20%22image%2Fjpeg%22%0A%20%20%20%20%7D%2C%0A%20%20%20%20%7B%0A%20%20%20%20%20%20%22src%22%3A%20%22https%3A%2F%2Flive.staticflickr.com%2F65535%2F55300817978_f977b99993.jpg%22%2C%0A%20%20%20%20%20%20%22sizes%22%3A%20%22512x512%22%2C%0A%20%20%20%20%20%20%22type%22%3A%20%22image%2Fjpeg%22%0A%20%20%20%20%7D%0A%20%20%5D%0A%7D'>
+  <!-- Tích hợp Manifest PWA -->
+  <link rel="manifest" href="./manifest.json">
   
+  <!-- Cấu hình Icon -->
   <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/Nguyennth19/hkd-dao-thanh-yen/refs/heads/main/icon-htk-dty.png">
   <link rel="apple-touch-icon" sizes="152x152" href="https://raw.githubusercontent.com/Nguyennth19/hkd-dao-thanh-yen/refs/heads/main/icon-htk-dty.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://raw.githubusercontent.com/Nguyennth19/hkd-dao-thanh-yen/refs/heads/main/icon-htk-dty.png">
   <link rel="apple-touch-icon" sizes="167x167" href="https://raw.githubusercontent.com/Nguyennth19/hkd-dao-thanh-yen/refs/heads/main/icon-htk-dty.png">
-  
   <link rel="icon" type="image/jpeg" sizes="192x192" href="https://raw.githubusercontent.com/Nguyennth19/hkd-dao-thanh-yen/refs/heads/main/icon-htk-dty.png">
   <link rel="shortcut icon" href="https://raw.githubusercontent.com/Nguyennth19/hkd-dao-thanh-yen/refs/heads/main/icon-htk-dty.png">
 
   <style>
-    body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background-color: #f0f4f8; font-family: 'Inter', sans-serif; }
-    #app-frame { width: 100%; height: 100%; border: none; display: none; }
+    body, html { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; background-color: #f0f4f8; font-family: 'Inter', sans-serif; }
     
-    /* --- MÀN HÌNH CHỜ KHỞI ĐỘNG CHUNG (MẶC ĐỊNH LÀ MOBILE) --- */
+    /* ----------------- KHUNG BỌC BACKEND (IFRAME) ----------------- */
+    #app-frame { 
+        width: 100%; 
+        height: 100%; 
+        border: none; 
+        display: none; 
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+    }
+    
+    /* ----------------- MÀN HÌNH CHỜ KHỞI ĐỘNG CHUNG ----------------- */
     #appSplashScreen {
         position: fixed;
         top: 0;
         left: 0;
         width: 100vw;
         height: 100vh;
-        /* Mặc định hiển thị ảnh dọc cho điện thoại */
         background: url('https://raw.githubusercontent.com/Nguyennth19/hkd-dao-thanh-yen/refs/heads/main/load-phone-hkd-dty.png') no-repeat center center;
         background-size: cover;
         z-index: 99999;
@@ -46,13 +55,10 @@
         transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
     }
 
-    /* --- MÀN HÌNH CHỜ KHỞI ĐỘNG (SPLASH SCREEN TRÀN VIỀN LAPTOP; DESKTOP) --- */
-    /* Sử dụng Media Query để thay đổi ảnh nền khi màn hình rộng từ 768px trở lên */
     @media (min-width: 768px) {
         #appSplashScreen {
             background: url('https://raw.githubusercontent.com/Nguyennth19/hkd-dao-thanh-yen/refs/heads/main/load-computer-hkd-dty.png') no-repeat center center;
             background-size: cover;
-            /* Điều chỉnh lại padding-bottom một chút để thanh tiến trình nhìn cân đối hơn trên màn hình lớn */
             padding-bottom: 10vh; 
         }
     }
@@ -62,6 +68,20 @@
         display: flex; 
         flex-direction: column; 
         align-items: center; 
+    }
+
+    /* Text trạng thái Loading */
+    .progress-status {
+        color: #ffffff;
+        font-size: 14px;
+        text-align: center;
+        margin-bottom: 15px;
+        line-height: 1.5;
+        font-weight: 600;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+        background: rgba(15, 23, 42, 0.6);
+        padding: 6px 16px;
+        border-radius: 20px;
     }
     
     .progress-container {
@@ -73,6 +93,7 @@
         border: 2px solid #64748b;
         border-radius: 11px; 
         box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
+        overflow: visible;
     }
     
     .progress-bar-fill {
@@ -106,12 +127,128 @@
         font-weight: 800;
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
     }
+
+    /* ----------------- NÚT CÀI ĐẶT PWA ANDROID ----------------- */
+    .btn-install {
+        position: fixed;
+        top: 25px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 25px;
+        font-weight: bold;
+        font-size: 14px;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        z-index: 100000;
+        transition: transform 0.2s, box-shadow 0.2s;
+        white-space: nowrap;
+    }
+    .btn-install:active { transform: translateX(-50%) scale(0.95); }
+    
+    /* ----------------- POPUP HƯỚNG DẪN CÀI ĐẶT IOS ----------------- */
+    .ios-prompt {
+        position: fixed;
+        bottom: 25px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(255, 255, 255, 0.98);
+        color: #1e293b;
+        padding: 15px 20px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+        text-align: center;
+        font-size: 14px;
+        width: 85%;
+        max-width: 320px;
+        z-index: 100000;
+        border: 1px solid #e2e8f0;
+        line-height: 1.6;
+    }
+    .ios-prompt b { color: #10b981; }
+    .ios-prompt .close-ios {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background: #ef4444;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        font-size: 12px;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .ios-prompt::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 10px 10px 0;
+        border-style: solid;
+        border-color: rgba(255, 255, 255, 0.98) transparent transparent transparent;
+    }
+    .hidden { display: none !important; }
+
+    /* ----------------- BANNER THÔNG BÁO CẬP NHẬT PHIÊN BẢN (PWA) ----------------- */
+    #updateBanner {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%) translateY(150px);
+        background: #1e293b;
+        color: white;
+        padding: 14px 24px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        width: 90%;
+        max-width: 420px;
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 10000;
+        border: 1px solid #334155;
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    #updateBanner.show { transform: translateX(-50%) translateY(0); }
+    #updateBanner button {
+        background: #10b981;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 13px;
+        box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
+        transition: all 0.2s;
+    }
+    #updateBanner button:hover { background: #059669; }
   </style>
 </head>
 <body>
 
+  <!-- UI Cài đặt PWA Android -->
+  <button id="btnInstallApp" class="btn-install hidden">📥 Cài đặt Ứng dụng</button>
+
+  <!-- UI Cài đặt PWA iOS -->
+  <div id="iosPrompt" class="ios-prompt hidden">
+    <button class="close-ios" onclick="document.getElementById('iosPrompt').classList.add('hidden')">✕</button>
+    Để cài đặt sử dụng Offline:<br>
+    Nhấn biểu tượng <b>Chia sẻ</b> ở dưới cùng màn hình và chọn <b>"Thêm vào MH chính"</b>.
+  </div>
+
   <div id="appSplashScreen">
     <div class="splash-content">
+      <div class="progress-status" id="splashProgressStatus">Đang kết nối cơ sở dữ liệu...</div>
       <div class="progress-container">
         <div id="splashProgressBar" class="progress-bar-fill"></div>
         <span id="splashProgressText" class="progress-text">0%</span>
@@ -119,30 +256,48 @@
     </div>
   </div>
 
-  <iframe id="app-frame" src="https://script.google.com/macros/s/AKfycbwfO7ChBbzkyb0U4qA2HCt9-EtZgylGYDWdqftS_nSG4eNnTrsi7eMfgX3RzgW_ldwH/exec"></iframe>
+  <!-- Banner thông báo cập nhật PWA -->
+  <div id="updateBanner">
+    <span>✨ Phát hiện bản cập nhật sổ sách mới!</span>
+    <button onclick="reloadApp()">Tải lại</button>
+  </div>
+
+  <iframe id="app-frame" 
+          sandbox="allow-scripts allow-top-navigation allow-forms allow-popups allow-same-origin"
+          src="https://script.google.com/macros/s/AKfycbwfO7ChBbzkyb0U4qA2HCt9-EtZgylGYDWdqftS_nSG4eNnTrsi7eMfgX3RzgW_ldwH/exec"></iframe>
 
   <script>
+    // ==========================================
+    // QUẢN LÝ TIẾN TRÌNH KHỞI ĐỘNG (SPLASH)
+    // ==========================================
     const progressBar = document.getElementById('splashProgressBar');
     const progressText = document.getElementById('splashProgressText');
+    const progressStatus = document.getElementById('splashProgressStatus');
     const splashScreen = document.getElementById('appSplashScreen');
     const appFrame = document.getElementById('app-frame');
     
     let currentPercent = 0;
     
-    // Tự động chạy giả lập thanh tiến trình lên mức 85% trong lúc chờ GAS tải dữ liệu
+    // Tối ưu vòng lặp Loading
     const interval = setInterval(() => {
-      if (currentPercent < 85) {
-        currentPercent += Math.floor(Math.random() * 3) + 1; 
-        if (currentPercent > 85) currentPercent = 85;
+      if (currentPercent < 90) {
+        currentPercent += Math.floor(Math.random() * 8) + 2; 
+        if (currentPercent > 90) currentPercent = 90;
         
         progressBar.style.width = currentPercent + '%';
         progressText.innerText = currentPercent + '%';
+
+        // Đổi trạng thái text cho HKD DTY
+        if (currentPercent > 50) {
+          progressStatus.innerText = "Đang chuẩn bị sổ sách kế toán...";
+        } else if (currentPercent > 25) {
+          progressStatus.innerText = "Đang đồng bộ dữ liệu HKD...";
+        }
       }
-    }, 100);
+    }, 68);
 
     // LẮNG NGHE TÍN HIỆU TỪ GOOGLE APPS SCRIPT
     window.addEventListener('message', function(event) {
-        // Nếu nhận đúng tín hiệu 'APP_READY' từ App bên trong
         if (event.data && event.data.type === 'APP_READY') {
             finishLoading();
         }
@@ -151,20 +306,119 @@
     // Hàm kết thúc Loading
     function finishLoading() {
       clearInterval(interval);
-      
-      // Ép thanh tiến trình nhảy vọt lên 100%
       progressBar.style.width = '100%';
       progressText.innerText = '100%';
+      progressStatus.innerText = 'Đã tải thành công!';
       
-      // Chờ 300ms để hiệu ứng thanh kéo dài mượt mà, sau đó ẩn màn hình chờ
       setTimeout(() => {
         splashScreen.style.opacity = '0';
         splashScreen.style.visibility = 'hidden';
-        appFrame.style.display = 'block'; // Mở Iframe lên
         
-        // Dọn dẹp DOM
+        appFrame.style.display = 'block';
+        setTimeout(() => {
+          appFrame.style.opacity = '1';
+        }, 50);
+        
         setTimeout(() => { splashScreen.remove(); }, 500);
       }, 300);
+    }
+
+    // Cơ chế Fallback an toàn: Hủy Splash sau 12 giây nếu Iframe treo
+    setTimeout(() => {
+      if (document.getElementById('appSplashScreen')) {
+        console.warn("Iframe tải quá lâu, kích hoạt chế độ Fallback...");
+        finishLoading();
+      }
+    }, 12000);
+
+    // ==========================================
+    // XỬ LÝ CÀI ĐẶT PWA (ANDROID & IOS)
+    // ==========================================
+    
+    // 1. Dành cho Android
+    let deferredPrompt;
+    const btnInstallApp = document.getElementById('btnInstallApp');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      btnInstallApp.classList.remove('hidden');
+    });
+
+    btnInstallApp.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          console.log('Đã chấp nhận cài đặt App HKD');
+        }
+        deferredPrompt = null;
+        btnInstallApp.classList.add('hidden');
+      }
+    });
+
+    // 2. Dành cho iOS
+    const iosPrompt = document.getElementById('iosPrompt');
+    const isIos = () => {
+      const userAgent = window.navigator.userAgent.toLowerCase();
+      return /iphone|ipad|ipod/.test(userAgent);
+    };
+    const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
+
+    if (isIos() && !isInStandaloneMode()) {
+      iosPrompt.classList.remove('hidden');
+      setTimeout(() => {
+        iosPrompt.classList.add('hidden');
+      }, 15000);
+    }
+
+    // ==========================================
+    // ĐĂNG KÝ VÀ KIỂM SOÁT SERVICE WORKER
+    // ==========================================
+    let newworker;
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then(reg => {
+          console.log('Service Worker đã đăng ký thành công.', reg);
+
+          reg.addEventListener('updatefound', () => {
+            newworker = reg.installing;
+            newworker.addEventListener('statechange', () => {
+              if (newworker.state === 'installed' && navigator.serviceWorker.controller) {
+                showUpdateBanner();
+              }
+            });
+          });
+        }).catch(err => {
+          console.error('Đăng ký Service Worker thất bại:', err);
+        });
+      });
+
+      let refreshing;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing) return;
+        window.location.reload(); 
+        refreshing = true;
+      });
+    }
+
+    function showUpdateBanner() {
+      document.getElementById('updateBanner').classList.add('show');
+    }
+
+    function reloadApp() {
+      if (newworker) {
+        newworker.postMessage({ action: 'skipWaiting' });
+      } else {
+        navigator.serviceWorker.getRegistration().then(reg => {
+          if (reg && reg.waiting) {
+            reg.waiting.postMessage({ action: 'skipWaiting' });
+          } else {
+            window.location.reload();
+          }
+        });
+      }
     }
   </script>
 </body>
