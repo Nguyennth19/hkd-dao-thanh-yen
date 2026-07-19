@@ -1,0 +1,17 @@
+<!-- MÀN HÌNH ĐĂNG NHẬP (BẢO MẬT) -->
+<div id="loginView" class="fixed inset-0 bg-[#fcfbf9] z-[60] flex flex-col justify-center items-center px-6 hidden">
+  <div id="loginBox" class="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 w-full max-w-sm text-center">
+    <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+      <i class="fas fa-lock text-2xl"></i>
+    </div>
+    <h2 class="text-xl font-black text-gray-800 mb-2">BẢO MẬT HỆ THỐNG</h2>
+    <p class="text-xs text-gray-500 mb-6">Vui lòng nhập mã PIN để truy cập Sổ sách HKD Đào Thanh Yến</p>
+    
+    <form onsubmit="submitLogin(event)">
+      <input type="password" inputmode="numeric" id="loginPin" placeholder="Nhập mã PIN" class="w-full border-2 border-gray-200 rounded-xl p-3 text-center text-lg font-bold tracking-[0.3em] mb-4 login-input transition-colors focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 outline-none" required>
+      <button type="submit" id="btnLogin" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl transition-colors shadow-md shadow-emerald-600/30">
+        ĐĂNG NHẬP
+      </button>
+    </form>
+  </div>
+</div>

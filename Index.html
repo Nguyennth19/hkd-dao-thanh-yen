@@ -30,7 +30,9 @@
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- BỔ SUNG GIAI ĐOẠN 4: Chuyển sang Font Inter chuẩn UI -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -40,23 +42,8 @@
 </head>
 <body class="bg-[#fcfbf9] text-gray-800 antialiased overflow-hidden">
 
-  <!-- MÀN HÌNH KHỞI ĐỘNG (SPLASH SCREEN GAME STYLE) - CHỈ CHẠY 1 LẦN LÚC MỞ APP -->
-  <div id="splashScreenGame" class="fixed inset-0 z-[99999] flex flex-col justify-end items-center pb-20 transition-opacity duration-1000" style="background-image: url('https://raw.githubusercontent.com/Nguyennth19/hkd-dao-thanh-yen/6c4014210efacb1285d57014594effdfe040fe8a/load-phone-hkd-dty.png'); background-size: cover; background-position: center; background-repeat: no-repeat; background-color: #10b981;">
-    
-    <!-- Tích hợp đồng tiền nảy đè lên ảnh nền -->
-    <div class="coin-wrapper mb-6">
-      <img src="https://raw.githubusercontent.com/Nguyennth19/hkd-dao-thanh-yen/6c4014210efacb1285d57014594effdfe040fe8a/Coin.png" class="coin-img w-20 h-20 drop-shadow-2xl" alt="Loading Coin">
-      <div class="coin-shadow bg-black/60 blur-[3px]"></div>
-    </div>
-
-    <!-- Thanh Loading chạy trong 5 giây -->
-    <div class="w-64 h-1.5 bg-black/40 rounded-full overflow-hidden backdrop-blur-md mb-3 border border-white/20 shadow-lg">
-      <div class="h-full bg-gradient-to-r from-emerald-400 to-green-300 rounded-full" style="animation: loadBar 4.5s ease-out forwards;"></div>
-    </div>
-    
-    <!-- Text thông báo -->
-    <span class="text-white font-bold text-xs tracking-[0.2em] uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">Đang khởi tạo hệ thống...</span>
-  </div>
+  <!-- MÀN HÌNH KHỞI ĐỘNG (Đã tách module) -->
+  <?!= include('View_Splash'); ?>
 
   <!-- SPINNER HIỆN TẠI CỦA BẠN (Dùng khi lưu dữ liệu hoặc chuyển tab bên trong App) -->
   <div id="globalSpinner" class="fixed inset-0 bg-white bg-opacity-90 z-50 flex flex-col justify-center items-center transition-opacity duration-300 opacity-0 pointer-events-none">
@@ -67,7 +54,11 @@
     <span class="text-green-700 font-bold text-sm tracking-wide mt-2">Hệ thống đang tải dữ liệu...</span>
   </div>
 
-  <div class="flex h-full w-full relative">
+  <!-- MÀN HÌNH ĐĂNG NHẬP (Đã tách module) -->
+  <?!= include('View_Login'); ?>
+
+  <!-- WRAPPER CHÍNH CỦA ỨNG DỤNG -->
+  <div id="mainAppWrapper" class="flex h-full w-full relative hidden">
     
     <aside class="hidden md:flex w-64 bg-white border-r border-gray-200 shadow-sm flex-col transition-all duration-300">
       <div class="p-6 border-b border-gray-100 flex items-center justify-center">
@@ -87,7 +78,10 @@
           <i class="fas fa-sliders-h w-6 text-lg"></i> Thiết lập
         </button>
       </nav>
-      <div class="p-4 border-t border-gray-100"><div class="text-xs text-gray-400 text-center font-medium">Hệ Thống Báo Cáo Thuế DTY</div></div>
+      <div class="p-4 border-t border-gray-100 flex flex-col gap-2">
+        <div class="text-xs text-gray-400 text-center font-medium">Hệ Thống Báo Cáo Thuế DTY</div>
+        <button onclick="doLogout()" class="text-xs text-red-500 hover:text-red-700 font-bold w-full text-center py-2 transition-colors"><i class="fas fa-sign-out-alt mr-1"></i> Đăng xuất</button>
+      </div>
     </aside>
 
     <main class="flex-1 flex flex-col relative overflow-hidden pb-16 md:pb-0">
@@ -125,23 +119,11 @@
 
   </div>
 
+  <!-- Nạp các module JavaScript -->
+  <?!= include('JS_Auth'); ?>
   <?!= include('JS_Global'); ?>
   <?!= include('JS_Dashboard'); ?>
   <?!= include('JS_Forms'); ?>
   
-  <!-- SCRIPT ĐIỀU KHIỂN MÀN HÌNH KHỞI ĐỘNG (Xóa sau 5 giây) -->
-  <script>
-    window.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => {
-        const splash = document.getElementById('splashScreenGame');
-        if (splash) {
-          splash.style.opacity = '0'; // Bắt đầu mờ dần
-          setTimeout(() => {
-            splash.remove(); // Xóa hẳn khỏi DOM sau khi mờ xong
-          }, 1000);
-        }
-      }, 5000); // Hiển thị chuẩn 5 giây
-    });
-  </script>
 </body>
 </html>

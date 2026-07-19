@@ -1,0 +1,32 @@
+<!-- MÀN HÌNH KHỞI ĐỘNG (SPLASH SCREEN GAME STYLE) - CHỈ CHẠY 1 LẦN LÚC MỞ APP -->
+<div id="splashScreenGame" class="fixed inset-0 z-[99999] flex flex-col justify-end items-center pb-20 transition-opacity duration-1000" style="background-image: url('https://raw.githubusercontent.com/Nguyennth19/hkd-dao-thanh-yen/6c4014210efacb1285d57014594effdfe040fe8a/load-phone-hkd-dty.png'); background-size: cover; background-position: center; background-repeat: no-repeat; background-color: #10b981;">
+  
+  <!-- Tích hợp đồng tiền nảy đè lên ảnh nền -->
+  <div class="coin-wrapper mb-6">
+    <img src="https://raw.githubusercontent.com/Nguyennth19/hkd-dao-thanh-yen/6c4014210efacb1285d57014594effdfe040fe8a/Coin.png" class="coin-img w-20 h-20 drop-shadow-2xl" alt="Loading Coin">
+    <div class="coin-shadow bg-black/60 blur-[3px]"></div>
+  </div>
+
+  <!-- Thanh Loading chạy trong 5 giây -->
+  <div class="w-64 h-1.5 bg-black/40 rounded-full overflow-hidden backdrop-blur-md mb-3 border border-white/20 shadow-lg">
+    <div class="h-full bg-gradient-to-r from-emerald-400 to-green-300 rounded-full" style="animation: loadBar 4.5s ease-out forwards;"></div>
+  </div>
+  
+  <!-- Text thông báo -->
+  <span class="text-white font-bold text-xs tracking-[0.2em] uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">Đang khởi tạo hệ thống...</span>
+</div>
+
+<!-- SCRIPT ĐIỀU KHIỂN MÀN HÌNH KHỞI ĐỘNG (Xóa sau 5 giây) -->
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+      const splash = document.getElementById('splashScreenGame');
+      if (splash) {
+        splash.style.opacity = '0'; // Bắt đầu mờ dần
+        setTimeout(() => {
+          splash.remove(); // Xóa hẳn khỏi DOM sau khi mờ xong
+        }, 1000);
+      }
+    }, 5000); // Hiển thị chuẩn 5 giây
+  });
+</script>

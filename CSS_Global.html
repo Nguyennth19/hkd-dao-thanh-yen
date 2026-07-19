@@ -9,7 +9,8 @@
     overflow: hidden;
   }
 
-  body { font-family: 'Plus Jakarta Sans', sans-serif; }
+  /* GIAI ĐOẠN 4: Đổi Font sang Inter */
+  body { font-family: 'Inter', sans-serif; }
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
   ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
@@ -34,14 +35,14 @@
   /* Bắt buộc ẩn View khi chưa active */
   .view-section.hidden { display: none !important; }
 
-  /* HIỆU ỨNG ĐỒNG TIỀN NẢY (COIN BOUNCE) */
+  /* GIAI ĐOẠN 4: HIỆU ỨNG ĐỒNG TIỀN NẢY ĐÃ ĐƯỢC CĂN CHỈNH TỰ NHIÊN */
   @keyframes bounce-coin {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-30px); }
+    50% { transform: translateY(-35px); }
   }
   @keyframes shadow-scale {
-    0%, 100% { transform: scale(1); opacity: 0.3; }
-    50% { transform: scale(0.5); opacity: 0.1; }
+    0%, 100% { transform: scale(1); opacity: 0.35; }
+    50% { transform: scale(0.55); opacity: 0.1; }
   }
   
   .coin-wrapper {
@@ -53,8 +54,9 @@
   }
   
   .coin-img {
-    width: 72px;
-    height: 72px;
+    /* Ép kích thước to hơn 8% (80px -> 86px), bỏ phụ thuộc class Tailwind w-20 h-20 */
+    width: 86px !important;
+    height: 86px !important;
     animation: bounce-coin 0.8s infinite ease-in-out;
     z-index: 2;
     object-fit: contain;
@@ -77,5 +79,22 @@
     50% { width: 60%; }
     80% { width: 90%; }
     100% { width: 100%; }
+  }
+
+  /* HIỆU ỨNG VÀ CLASS CHO MÀN HÌNH LOGIN */
+  .login-input {
+     text-security: disc;
+     -webkit-text-security: disc;
+  }
+  
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+  }
+  
+  .shake {
+    animation: shake 0.4s ease-in-out;
   }
 </style>

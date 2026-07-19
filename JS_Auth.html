@@ -1,0 +1,81 @@
+<script>
+// KIỂM TRA TRẠNG THÁI ĐĂNG NHẬP (Tối ưu Fix Vấn đề 2: Mất thanh cuộn)
+function checkLoginStatus() {
+  const token = localStorage.getItem('hkd_dty_auth');
+  const loginView = document.getElementById('loginView');
+  const mainAppWrapper = document.getElementById('mainAppWrapper');
+
+  if (token === 'true') {
+    // Ẩn màn hình Login
+    loginView.classList.add('hidden');
+    loginView.classList.remove('flex');
+    
+    // Ép class flex để khôi phục layout chuẩn của Tailwind (Khắc phục vỡ layout SPA)
+    mainAppWrapper.classList.remove('hidden');
+    mainAppWrapper.classList.add('flex');
+    
+    // Gọi hàm khởi tạo App từ JS_Global
+    if(typeof initializeApp === 'function') {
+      initializeApp(); 
+    }
+  } else {
+    // Hiện màn hình Login
+    loginView.classList.remove('hidden');
+    loginView.classList.add('flex');
+    
+    // Ẩn hoàn toàn khối App
+    mainAppWrapper.classList.add('hidden');
+    mainAppWrapper.classList.remove('flex');
+  }
+}
+
+// XỬ LÝ SỰ KIỆN NÚT ĐĂNG NHẬP
+function submitLogin(e) {
+  e.preventDefault();
+  const pin = document.getElementById('loginPin').value;
+  if (!pin) return;
+  
+  const btn = document.getElementById('btnLogin');
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang kiểm tra...';
+  btn.disabled = true;
+
+  google.script.run.withSuccessHandler(res => {
+    if(res.success) {
+      localStorage.setItem('hkd_dty_auth', 'true');
+      
+      const loginView = document.getElementById('loginView');
+      const mainAppWrapper = document.getElementById('mainAppWrapper');
+      
+      // Ẩn màn hình Login
+      loginView.classList.add('hidden');
+      loginView.classList.remove('flex');
+      
+      // Ép class flex khôi phục layout chuẩn
+      mainAppWrapper.classList.remove('hidden');
+      mainAppWrapper.classList.add('flex');
+      
+      if(typeof initializeApp === 'function') {
+        initializeApp();
+      }
+    } else {
+      const box = document.getElementById('loginBox');
+      box.classList.add('shake'); // Kích hoạt hiệu ứng rung lắc
+      setTimeout(() => box.classList.remove('shake'), 400);
+      alert(res.message);
+      btn.innerHTML = 'ĐĂNG NHẬP';
+      btn.disabled = false;
+      document.getElementById('loginPin').value = '';
+    }
+  }).withFailureHandler(err => {
+    alert("Lỗi kết nối máy chủ: " + err);
+    btn.innerHTML = 'ĐĂNG NHẬP';
+    btn.disabled = false;
+  }).verifyPinCode(pin);
+}
+
+// XỬ LÝ ĐĂNG XUẤT
+function doLogout() {
+  localStorage.removeItem('hkd_dty_auth');
+  window.location.reload();
+}
+</script>
